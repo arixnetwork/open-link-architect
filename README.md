@@ -57,4 +57,3 @@ MIT
 
 This tool is designed for ethical, white-hat outreach only.  
 Do not use it for spam, automated low-quality link building, or any activity that violates search engine guidelines.
-
