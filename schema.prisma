@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  createdAt DateTime   @default(now())
+  campaigns Campaign[]
+}
+
+model Campaign {
+  id        String     @id @default(cuid())
+  name      String
+  targetUrl String
+  keyword   String
+  status    String     @default("draft") // draft | active | paused | completed
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      User       @relation(fields: [userId], references: [id])
+  prospects Prospect[]
+  emails    Email[]
+}
+
+model Prospect {
+  id         String   @id @default(cuid())
+  domain     String
+  url        String?
+  title      String?
+  da         Int?
+  relevance  Float?
+  status     String   @default("new") // new | contacted | replied | linked | rejected
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  emails     Email[]
+  createdAt  DateTime @default(now())
+}
+
+model Email {
+  id         String    @id @default(cuid())
+  subject    String
+  body       String
+  status     String    @default("draft") // draft | sent | opened | replied
+  sentAt     DateTime?
+  prospectId String
+  prospect   Prospect  @relation(fields: [prospectId], references: [id], onDelete: Cascade)
+  campaignId String
+  campaign   Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+}
